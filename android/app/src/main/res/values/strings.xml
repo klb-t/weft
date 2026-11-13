@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Weft</string>
+    <string name="address_hint">https://</string>
+    <string name="approve_title">Zatwierdzić?</string>
+    <string name="approve_secret_hint">Hasło zostaje na telefonie</string>
+    <string name="allow">Zezwól</string>
+    <string name="deny">Odmów</string>
+    <string name="policy_missing">Agent wyłączony: brak libweft. Przeglądasz sam.</string>
+</resources>

@@ -1,0 +1,66 @@
+{
+  "id": "weft",
+  "kind": "mcp",
+  "transport": "stdio",
+  "command": "node",
+  "args": ["REPLACE_WITH_ABSOLUTE_PATH/mcp/server.mjs"],
+  "label": "Weft",
+  "enabled": true,
+  "tools": {
+    "weft_open": {
+      "effects": {
+        "reads_only": false,
+        "writes": true,
+        "sends_off_device": true,
+        "costs_money": false,
+        "irreversible": false,
+        "touches_private_data": true,
+        "effects_unknown": false
+      }
+    },
+    "weft_snapshot": {
+      "effects": {
+        "reads_only": true,
+        "writes": false,
+        "sends_off_device": false,
+        "costs_money": false,
+        "irreversible": false,
+        "touches_private_data": true,
+        "effects_unknown": false
+      }
+    },
+    "weft_act": {
+      "effects": {
+        "reads_only": false,
+        "writes": true,
+        "sends_off_device": true,
+        "costs_money": false,
+        "irreversible": false,
+        "touches_private_data": true,
+        "effects_unknown": false
+      }
+    },
+    "weft_pending": {
+      "effects": {
+        "reads_only": true,
+        "writes": false,
+        "sends_off_device": false,
+        "costs_money": false,
+        "irreversible": false,
+        "touches_private_data": false,
+        "effects_unknown": false
+      }
+    },
+    "weft_close": {
+      "effects": {
+        "reads_only": false,
+        "writes": true,
+        "sends_off_device": false,
+        "costs_money": false,
+        "irreversible": false,
+        "touches_private_data": false,
+        "effects_unknown": false
+      }
+    }
+  }
+}

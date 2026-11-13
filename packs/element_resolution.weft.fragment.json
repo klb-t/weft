@@ -1,0 +1,9 @@
+{
+  "schema_note": "One id form. Append it to defaults.id_forms. Do not replace kernel/loom/data/runtime/element_resolution.pack. source is the closed enum value projection; class is a free string. A bare id weft:<session> then resolves without a store read.",
+  "id_form": {
+    "id": "projection_weft",
+    "prefix": "weft:",
+    "source": "projection",
+    "class": "weft_session"
+  }
+}

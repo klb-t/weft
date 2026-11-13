@@ -1,0 +1,13 @@
+build/
+*.o
+control.json
+*.lock
+daemon.log
+.env
+*.keystore
+*.jks
+local.properties
+.gradle/
+android/.gradle/
+android/**/build/
+android/local.properties

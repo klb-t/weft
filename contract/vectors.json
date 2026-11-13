@@ -1,0 +1,175 @@
+[
+  {
+    "name": "ordinary click",
+    "effect": "allow",
+    "rule_id": "default",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/docs", "elements": [{"ref": "e1", "role": "link", "name": "More", "tag": "a", "type": "", "autocomplete": ""}]},
+      "action": {"op": "click", "ref": "e1"}
+    }
+  },
+  {
+    "name": "type into search",
+    "effect": "allow",
+    "rule_id": "default",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/search", "elements": [{"ref": "q", "role": "textbox", "name": "Search", "tag": "input", "type": "search", "autocomplete": "off"}]},
+      "action": {"op": "type", "ref": "q", "text": "loom weft"}
+    }
+  },
+  {
+    "name": "password text from the agent is refused",
+    "effect": "deny",
+    "rule_id": "secret_in_payload",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/login", "elements": [{"ref": "pw", "role": "textbox", "name": "Hasło", "tag": "input", "type": "password", "autocomplete": "current-password"}]},
+      "action": {"op": "type", "ref": "pw", "text": "hunter2"}
+    }
+  },
+  {
+    "name": "asking to use the password field waits",
+    "effect": "approve",
+    "rule_id": "secret_target",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/login", "elements": [{"ref": "pw", "role": "textbox", "name": "Hasło", "tag": "input", "type": "password", "autocomplete": "current-password"}]},
+      "action": {"op": "type", "ref": "pw", "text": ""}
+    }
+  },
+  {
+    "name": "the person may use the password field",
+    "effect": "allow",
+    "rule_id": "secret_target",
+    "request": {
+      "actor": "person",
+      "snapshot": {"url": "https://example.com/login", "elements": [{"ref": "pw", "role": "textbox", "name": "Hasło", "tag": "input", "type": "password", "autocomplete": "current-password"}]},
+      "action": {"op": "focus", "ref": "pw"}
+    }
+  },
+  {
+    "name": "sign-in button on a login page waits",
+    "effect": "approve",
+    "rule_id": "password_submit_button",
+    "request": {
+      "actor": "agent",
+      "snapshot": {
+        "url": "https://accounts.example/login",
+        "elements": [
+          {"ref": "pw", "role": "textbox", "name": "Hasło", "tag": "input", "type": "password", "autocomplete": "current-password"},
+          {"ref": "go", "role": "button", "name": "Zaloguj się", "tag": "button", "type": "submit", "autocomplete": ""}
+        ]
+      },
+      "action": {"op": "click", "ref": "go"}
+    }
+  },
+  {
+    "name": "a link on a login page is still ordinary",
+    "effect": "allow",
+    "rule_id": "default",
+    "request": {
+      "actor": "agent",
+      "snapshot": {
+        "url": "https://accounts.example/login",
+        "elements": [
+          {"ref": "pw", "role": "textbox", "name": "Hasło", "tag": "input", "type": "password", "autocomplete": "current-password"},
+          {"ref": "help", "role": "link", "name": "Help", "tag": "a", "type": "", "autocomplete": ""}
+        ]
+      },
+      "action": {"op": "click", "ref": "help"}
+    }
+  },
+  {
+    "name": "oauth continue waits even without a password field",
+    "effect": "approve",
+    "rule_id": "login_consent",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://accounts.google.example/o/oauth/v2/auth", "elements": [{"ref": "ok", "role": "button", "name": "Continue", "tag": "button", "type": "button", "autocomplete": ""}]},
+      "action": {"op": "click", "ref": "ok"}
+    }
+  },
+  {
+    "name": "submitting a password form waits",
+    "effect": "approve",
+    "rule_id": "password_submit",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/login", "has_password_field": true, "elements": []},
+      "action": {"op": "submit"}
+    }
+  },
+  {
+    "name": "human gesture preempts the agent",
+    "effect": "preempt",
+    "rule_id": "human_preempt",
+    "request": {
+      "actor": "agent",
+      "human_active": true,
+      "snapshot": {"url": "https://example.com/", "elements": [{"ref": "e1", "role": "link", "name": "More", "tag": "a", "type": "", "autocomplete": ""}]},
+      "action": {"op": "click", "ref": "e1"}
+    }
+  },
+  {
+    "name": "password embedded in the address is refused",
+    "effect": "deny",
+    "rule_id": "bad_navigation",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/", "elements": []},
+      "action": {"op": "navigate", "url": "https://ada:secret@example.com/inbox"}
+    }
+  },
+  {
+    "name": "javascript urls are refused",
+    "effect": "deny",
+    "rule_id": "bad_navigation",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/", "elements": []},
+      "action": {"op": "navigate", "url": "javascript:alert(1)"}
+    }
+  },
+  {
+    "name": "unknown operation is refused",
+    "effect": "deny",
+    "rule_id": "unknown_op",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/", "elements": []},
+      "action": {"op": "fly"}
+    }
+  },
+  {
+    "name": "card number in the action is refused",
+    "effect": "deny",
+    "rule_id": "secret_in_payload",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://shop.example/pay", "elements": [{"ref": "cc", "role": "textbox", "name": "Card", "tag": "input", "type": "text", "autocomplete": "cc-number"}]},
+      "action": {"op": "type", "ref": "cc", "text": "4111111111111111"}
+    }
+  },
+  {
+    "name": "permission allow waits",
+    "effect": "approve",
+    "rule_id": "permission_prompt",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/maps", "permission_prompt": true, "elements": [{"ref": "yes", "role": "button", "name": "Allow", "tag": "button", "type": "button", "autocomplete": ""}]},
+      "action": {"op": "click", "ref": "yes"}
+    }
+  },
+  {
+    "name": "extract is ordinary",
+    "effect": "allow",
+    "rule_id": "default",
+    "request": {
+      "actor": "agent",
+      "snapshot": {"url": "https://example.com/docs", "elements": [{"ref": "p", "role": "link", "name": "Intro", "tag": "a", "type": "", "autocomplete": ""}]},
+      "action": {"op": "extract", "ref": "p"}
+    }
+  }
+]

@@ -1,0 +1,95 @@
+{
+  "schema": "loom.runtime_profile/1",
+  "domain": "weft",
+  "revision": 1,
+  "description": "Co-browsing policy for Weft. The agent and the person share one Chromium page. Ordinary actions run. Anything that would submit, type or accept a credential, a card or a browser permission waits for the person. A secret typed into an action is refused and never stored. Patterns and the rule list are data; native code only evaluates them. Labels are pl and en.",
+  "defaults": {
+    "preempt_ms": 400,
+    "approval_timeout_ms": 90000,
+    "human_promotes_approve_to_allow": true,
+    "navigate_schemes": ["http", "https", "about"],
+    "ops": ["navigate", "back", "forward", "reload", "click", "type", "fill", "press", "scroll", "hover", "select", "extract", "wait", "submit", "focus"],
+    "secret_keys": ["password", "passphrase", "secret", "pin", "cvv", "cvc", "otp", "access_token", "refresh_token"],
+    "secret_types": ["password"],
+    "secret_autocomplete": ["current-password", "new-password", "cc-number", "cc-csc", "cc-exp", "cc-name"],
+    "patterns": {
+      "secret_value": "(hasło|haslo|password|passwd|pwd)\\s*[:=]\\s*\\S{4,}|sk-[A-Za-z0-9_-]{20,}",
+      "userinfo": "://[^/@\\s]+:[^/@\\s]+@",
+      "secret_name": "password|passwd|hasło|haslo|cvv|cvc|\\botp\\b|\\bpin\\b",
+      "login_url": "login|sign[- ]?in|oauth|accounts\\.google|\\bsso\\b|/auth(?:/|$|\\?)",
+      "consent": "sign[\\s-]*in|log[\\s-]*in|zaloguj|continue|kontynuuj|allow|zezwól|authorize|autoryzuj|accept|akceptuj",
+      "permission": "\\ballow\\b|zezwól|while using|tylko teraz|\\bpermit\\b"
+    },
+    "page": {
+      "secret_types": ["password"],
+      "secret_autocomplete": ["current-password", "new-password", "cc-number", "cc-csc", "cc-exp", "cc-name"],
+      "secret_name_regex": "password|passwd|hasło|haslo|cvv|cvc|\\botp\\b|\\bpin\\b",
+      "max_text": 400
+    },
+    "rules": [
+      {
+        "id": "secret_target",
+        "effect": "approve",
+        "when": {"element_secret": true, "op_in": ["click", "type", "fill", "press", "submit", "focus"]},
+        "reason": {
+          "en": "That control carries a credential or a card. You approve it; the model never sees the secret.",
+          "pl": "To pole niesie hasło albo kartę. Zatwierdzasz je Ty; model sekretu nie widzi."
+        }
+      },
+      {
+        "id": "password_submit",
+        "effect": "approve",
+        "when": {"snapshot_flag": "has_password_field", "op_in": ["submit"]},
+        "reason": {
+          "en": "Submitting a page that asks for a password needs you.",
+          "pl": "Wysłanie strony, która prosi o hasło, wymaga Ciebie."
+        }
+      },
+      {
+        "id": "password_submit_button",
+        "effect": "approve",
+        "when": {"snapshot_flag": "has_password_field", "op_in": ["click"], "element_type_in": ["submit"]},
+        "reason": {
+          "en": "That button submits a password form.",
+          "pl": "Ten przycisk wysyła formularz z hasłem."
+        }
+      },
+      {
+        "id": "login_consent",
+        "effect": "approve",
+        "when": {"login_url": true, "op_in": ["click", "submit"], "name_matches": "consent"},
+        "reason": {
+          "en": "This looks like a sign-in or consent. You approve it.",
+          "pl": "To wygląda na logowanie albo zgodę. Zatwierdzasz to Ty."
+        }
+      },
+      {
+        "id": "permission_prompt",
+        "effect": "approve",
+        "when": {"snapshot_flag": "permission_prompt", "op_in": ["click"], "name_matches": "permission"},
+        "reason": {
+          "en": "The page wants a browser permission. You decide.",
+          "pl": "Strona chce uprawnienia przeglądarki. Decydujesz Ty."
+        }
+      }
+    ]
+  },
+  "value_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["preempt_ms", "approval_timeout_ms", "human_promotes_approve_to_allow", "navigate_schemes", "ops", "secret_keys", "secret_types", "secret_autocomplete", "patterns", "page", "rules"],
+    "properties": {
+      "preempt_ms": {"type": "integer", "minimum": 0},
+      "approval_timeout_ms": {"type": "integer", "minimum": 1},
+      "human_promotes_approve_to_allow": {"type": "boolean"},
+      "navigate_schemes": {"type": "array", "items": {"type": "string"}},
+      "ops": {"type": "array", "items": {"type": "string"}},
+      "secret_keys": {"type": "array", "items": {"type": "string"}},
+      "secret_types": {"type": "array", "items": {"type": "string"}},
+      "secret_autocomplete": {"type": "array", "items": {"type": "string"}},
+      "patterns": {"type": "object"},
+      "page": {"type": "object"},
+      "rules": {"type": "array"}
+    }
+  }
+}
